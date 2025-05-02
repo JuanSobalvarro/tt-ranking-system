@@ -1,7 +1,0 @@
-id,action_time,object_id,object_repr,action_flag,change_message,content_type_id,user_id
-1,2024-08-06 02:49:23.651153,2,alfredo,1,"[{""added"": {}}]",4,1
-2,2024-08-06 02:49:57.057489,2,alfredo,2,"[{""changed"": {""fields"": [""Staff status""]}}]",4,1
-3,2024-08-21 20:49:13.949455,3,Aarock,1,"[{""added"": {}}]",4,1
-4,2024-08-21 20:49:35.719070,3,Aarock,2,"[{""changed"": {""fields"": [""First name"", ""Last name"", ""Staff status""]}}]",4,1
-5,2024-08-21 20:49:47.079808,3,aarock,2,"[{""changed"": {""fields"": [""Username""]}}]",4,1
-6,2024-08-21 20:59:12.908372,3,aarock,2,"[{""changed"": {""fields"": [""password""]}}]",4,1

@@ -1,5 +1,0 @@
-id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined
-1,pbkdf2_sha256$720000$RcLJW6vgkkHpGdTV5AHVPD$OfNvIvoeYxxNZxQgUwqypV6JxtiHt30e/B1IkS7iqRw=,2024-12-12 18:19:49.013066,1,juan,,,sobalvarrog.juans@gmail.com,1,1,2024-08-06 02:48:09.252871
-2,pbkdf2_sha256$720000$zRl7uaN7wufT2BjFdBuQ2G$tSGSiZK062HjojLGt430Ey0DjSHf7fFk0HY9PwIbLSs=,2024-11-15 02:09:54.096769,0,alfredo,,,,1,1,2024-08-06 02:49:23
-3,pbkdf2_sha256$720000$43RG9OFrRTP9HrasGXxqP0$x7Cucu+IOriLjkR95vr5eWgBobgU+2k94pG4AWP11js=,2024-08-29 14:35:40.717664,0,aarock,Aarón,Cisneros,,1,1,2024-08-21 20:49:13
-4,pbkdf2_sha256$720000$vRcGOjchpPR26tZtgJT41V$KVe64xWnL7RfTNqGzd+mQ2qlbO34QRJMUaqeDpRq5P8=,2024-09-16 18:38:17.463507,1,heyner,,,,1,1,2024-09-16 18:37:24.021540
