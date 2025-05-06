@@ -1,11 +1,11 @@
 services:
   backend:
     build:
-      context: ./ttranking
+      context: backend
     ports:
       - "8000:8000"
     volumes:
-      - ./ttranking:/app
+      - ./backend:/app
       - ./backups:/backups
       - ./scripts:/scripts
     depends_on:
