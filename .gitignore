@@ -1,3 +1,5 @@
+./backups
+
 ### Django template
 *.log
 *.pot

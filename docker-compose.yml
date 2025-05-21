@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: backend
     build:
       context: backend
     ports:
@@ -20,6 +21,7 @@ services:
              fi"  
 
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
     ports:
@@ -38,16 +40,85 @@ services:
              fi"
 
   db:
+    container_name: db
     build:
         context: ./db
     env_file:
       - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backups:/backups
       - ./scripts:/scripts
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backup:
+    image: alpine:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    volumes:
+      - ./backups:/backups
+    restart: unless-stopped
+    command: >
+      /bin/sh -c "
+        apk add --no-cache postgresql17-client busybox-extras &&
+
+        # Manual backup on start
+        PGPASSWORD=\"$POSTGRES_PASSWORD\" pg_dump -U \"$POSTGRES_USER\" -h db -d \"$POSTGRES_DB\" > /backups/manual_backup_$(date +%Y%m%d_%H%M).sql &&
+
+        # Weekly backup at Sunday 3 AM (use PGPASSWORD inline for cron)
+        echo '0 3 * * 0 PGPASSWORD=\"$POSTGRES_PASSWORD\" pg_dump -U \"$POSTGRES_USER\" -h db -d \"$POSTGRES_DB\" > /backups/backup_$(date +\\%Y\\%m\\%d).sql' > /etc/crontabs/root &&
+
+        # Daily cleanup at 4 AM: delete backups older than 30 days
+        echo '0 4 * * * find /backups -type f -name \"*.sql\" -mtime +30 -delete' >> /etc/crontabs/root &&
+
+        crond -f -l 8
+      "
+  
+
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./frontend:/app/frontend
+      - ./backend:/app/backend
+    depends_on:
+      - backend
+      - frontend
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c"
+    command: >
+      "trap exit TERM; while :; do
+        echo '=== Checking certificates ===';
+        certbot renew --webroot -w /var/www/certbot --quiet;
+        sleep 12h;
+      done"
+
 volumes:
     postgres_data:
     frontend_node_modules:

@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import PlayerProfile, RefereeProfile
 
-# Register your models here.
+admin.site.register(PlayerProfile)
+admin.site.register(RefereeProfile)

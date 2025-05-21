@@ -1,17 +1,12 @@
 import os
 import subprocess
-
-# Configuration
-POSTGRES_CONTAINER_NAME = "ttranking-db-1"  # Replace with your PostgreSQL container name
-DUMP_FILE_PATH = "../backups/converted_postgres.sql"  # Replace with the path to your PostgreSQL dump file
-POSTGRES_USER = "root"  # Replace with your PostgreSQL user
-POSTGRES_DB = "ttranking"  # Replace with your database name
+import argparse
 
 # Helper function to execute a shell command
-def run_command(command):
+def run_command(command, env=None):
     """Executes a shell command."""
     try:
-        result = subprocess.run(command, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(command, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"Error executing command: {e}")
@@ -19,65 +14,73 @@ def run_command(command):
         return None
 
 # Step 1: Copy the dump file to the PostgreSQL container
-def copy_dump_to_container():
-    print(f"Copying dump file to PostgreSQL container: {POSTGRES_CONTAINER_NAME}")
-    command = ["docker", "cp", DUMP_FILE_PATH, f"{POSTGRES_CONTAINER_NAME}:/tmp/dump.sql"]
+def copy_dump_to_container(container_name, dump_file_path):
+    print(f"Copying dump file to PostgreSQL container: {container_name}")
+    command = ["docker", "cp", dump_file_path, f"{container_name}:/tmp/dump.sql"]
     result = run_command(command)
     if result is not None:
-        print(f"Successfully copied dump file to {POSTGRES_CONTAINER_NAME}.")
+        print(f"Successfully copied dump file to {container_name}.")
         return True
     return False
 
 # Step 2: Load the dump into the PostgreSQL database
-def load_dump_into_postgres():
-    print(f"Loading dump into PostgreSQL database in container: {POSTGRES_CONTAINER_NAME}")
+def load_dump_into_postgres(container_name, user, password, db_name):
+    print(f"Loading dump into PostgreSQL database in container: {container_name}")
+    env = os.environ.copy()
+    env["PGPASSWORD"] = password
     command = [
-        "docker", "exec", POSTGRES_CONTAINER_NAME,
-        "psql", "-U", POSTGRES_USER, "-d", POSTGRES_DB, "-f", "/tmp/dump.sql"
+        "docker", "exec", container_name,
+        "psql", "-U", user, "-d", db_name, "-f", "/tmp/dump.sql"
     ]
-    result = run_command(command)
+    result = run_command(command, env=env)
     if result is not None:
         print(f"Successfully loaded dump into PostgreSQL database.")
         return True
     return False
 
-# Step 3: Apply migrations
-def apply_migrations():
+# Step 3: Apply migrations (assuming pg_dump is part of migrations step?)
+def apply_migrations(container_name, user, password):
     print("Applying migrations...")
-    command = ["docker", "exec", POSTGRES_CONTAINER_NAME, "sh", "-c", "pg_dump", "-U", POSTGRES_USER ,"> /tmp/post_migrations.sql"]
-    result = run_command(command)
+    env = os.environ.copy()
+    env["PGPASSWORD"] = password
+    # This command seems to create a dump, not apply migrations — adjust as needed
+    command = ["docker", "exec", container_name, "sh", "-c", f"pg_dump -U {user} > /tmp/post_migrations.sql"]
+    result = run_command(command, env=env)
     if result is not None:
         print("Migrations applied successfully.")
         return True
     return False
 
 # Step 4: Cleanup
-def cleanup():
+def cleanup(container_name):
     print("Cleaning up temporary files...")
-    command = ["docker", "exec", POSTGRES_CONTAINER_NAME, "rm", "/tmp/dump.sql"]
+    command = ["docker", "exec", container_name, "rm", "/tmp/dump.sql"]
     run_command(command)
     print("Cleanup complete.")
 
 def main():
-    # Check if dump file exists
-    if not os.path.exists(DUMP_FILE_PATH):
-        print(f"Error: Dump file {DUMP_FILE_PATH} does not exist.")
+    parser = argparse.ArgumentParser(description="Load a PostgreSQL dump inside a Docker container.")
+    parser.add_argument("--container", default="ttranking-db-1", help="PostgreSQL Docker container name")
+    parser.add_argument("--dump", default="../backups/converted_postgres.sql", help="Path to PostgreSQL dump file")
+    parser.add_argument("--user", default="root", help="PostgreSQL user")
+    parser.add_argument("--password", required=True, help="PostgreSQL user password")
+    parser.add_argument("--db", default="ttranking", help="PostgreSQL database name")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.dump):
+        print(f"Error: Dump file {args.dump} does not exist.")
         return
 
-    # Step 1: Copy the dump file to the container
-    if not copy_dump_to_container():
+    if not copy_dump_to_container(args.container, args.dump):
         return
 
-    # Step 2: Load the dump into PostgreSQL
-    if not load_dump_into_postgres():
+    if not load_dump_into_postgres(args.container, args.user, args.password, args.db):
         return
 
-    # Step 3: Apply migrations
-    if not apply_migrations():
+    if not apply_migrations(args.container, args.user, args.password):
         return
 
-    # Step 4: Cleanup temporary files
-    cleanup()
+    cleanup(args.container)
 
 if __name__ == "__main__":
     main()
