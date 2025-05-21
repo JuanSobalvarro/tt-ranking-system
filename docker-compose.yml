@@ -1,6 +1,6 @@
 services:
   backend:
-    container_name: backend
+    container_name: ttranking-backend
     build:
       context: backend
     ports:
@@ -21,7 +21,7 @@ services:
              fi"  
 
   frontend:
-    container_name: frontend
+    container_name: ttranking-frontend
     build:
       context: ./frontend
     ports:
@@ -40,7 +40,7 @@ services:
              fi"
 
   db:
-    container_name: db
+    container_name: ttranking-db
     build:
         context: ./db
     env_file:
@@ -63,6 +63,7 @@ services:
 
   backup:
     image: alpine:latest
+    container_name: ttranking-backup
     depends_on:
       db:
         condition: service_healthy
@@ -89,7 +90,7 @@ services:
   
 
   nginx:
-    container_name: nginx
+    container_name: ttranking-nginx
     restart: unless-stopped
     build:
       context: ./nginx
@@ -106,7 +107,7 @@ services:
       - frontend
 
   certbot:
-    container_name: certbot
+    container_name: ttranking-certbot
     image: certbot/certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt

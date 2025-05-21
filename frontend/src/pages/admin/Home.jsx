@@ -82,11 +82,11 @@ function AdminHome() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Singles</h3>
-                <p className="text-3xl text-blue-500">{data.single_matches_played_last_3days}</p>
+                <p className="text-3xl text-blue-500">{data?.single_matches_played_last_3days}</p>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Doubles</h3>
-                <p className="text-3xl text-green-500">{data.double_matches_played_last_3days}</p>
+                <p className="text-3xl text-green-500">{data?.double_matches_played_last_3days}</p>
               </div>
             </div>
           </div>
@@ -97,10 +97,10 @@ function AdminHome() {
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">Most Active Players Last Week</h2>
             <ul className="space-y-3">
-              {data.most_active_players_last_week.length > 0 ? (
+              {Array.isArray(data?.most_active_players_last_week) && data.most_active_players_last_week.length > 0 ? (
                 data.most_active_players_last_week.map((player, index) => (
                   <li
-                    key={player.player_id}
+                    key={player.player_id || index}
                     className="bg-gray-50 rounded p-4 shadow-sm hover:bg-gray-100 transition">
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-800">Player: {player.player_name}</span>
@@ -114,6 +114,7 @@ function AdminHome() {
             </ul>
           </div>
         </section>
+
       </main>
       <AdminFooter />
     </div>

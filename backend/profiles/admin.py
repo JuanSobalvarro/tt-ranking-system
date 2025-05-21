@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import PlayerProfile, RefereeProfile
+from .models import PlayerProfile
 
 admin.site.register(PlayerProfile)
-admin.site.register(RefereeProfile)
