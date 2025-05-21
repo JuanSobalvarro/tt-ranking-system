@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'matches',
     'players',
     'seasons',
+    'profiles',
 ]
 
 MIDDLEWARE = [
@@ -149,7 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = '/admin-panel/login/'
+# LOGIN_URL = '/admin-panel/login/'
 
 # Time (in seconds) before the session expires due to inactivity
 SESSION_COOKIE_AGE = 1800  # 30 minutes

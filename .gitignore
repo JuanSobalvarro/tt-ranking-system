@@ -1,3 +1,6 @@
+backups
+./backups
+
 ### Django template
 *.log
 *.pot
@@ -177,3 +180,4 @@ cython_debug/
 
 backend/static/
 backend/staticfiles/
+/backups/
