@@ -77,17 +77,16 @@ services:
         apk add --no-cache postgresql17-client busybox-extras &&
 
         # Manual backup on start
-        PGPASSWORD=\"$POSTGRES_PASSWORD\" pg_dump -U \"$POSTGRES_USER\" -h db -d \"$POSTGRES_DB\" > /backups/manual_backup_$(date +%Y%m%d_%H%M).sql &&
+        PGPASSWORD=\"$$POSTGRES_PASSWORD\" pg_dump -U \"$$POSTGRES_USER\" -h db -d \"$$POSTGRES_DB\" > /backups/manual_backup_$$(date +%Y%m%d_%H%M).sql &&
 
         # Weekly backup at Sunday 3 AM (use PGPASSWORD inline for cron)
-        echo '0 3 * * 0 PGPASSWORD=\"$POSTGRES_PASSWORD\" pg_dump -U \"$POSTGRES_USER\" -h db -d \"$POSTGRES_DB\" > /backups/backup_$(date +\\%Y\\%m\\%d).sql' > /etc/crontabs/root &&
+        echo '0 3 * * 0 PGPASSWORD=\"$$POSTGRES_PASSWORD\" pg_dump -U \"$$POSTGRES_USER\" -h db -d \"$$POSTGRES_DB\" > /backups/backup_$$(date +\\%Y\\%m\\%d).sql' > /etc/crontabs/root &&
 
         # Daily cleanup at 4 AM: delete backups older than 30 days
         echo '0 4 * * * find /backups -type f -name \"*.sql\" -mtime +30 -delete' >> /etc/crontabs/root &&
 
         crond -f -l 8
       "
-  
 
   nginx:
     container_name: ttranking-nginx
