@@ -6,7 +6,7 @@ Requires=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=~/tt-ranking-system
+WorkingDirectory=/home/sobalvarrog_juans/tt-ranking-system
 ExecStart=/usr/bin/docker-compose -f docker-compose.yml up -d
 ExecStop=/usr/bin/docker-compose -f docker-compose.yml down
 ExecReload=/usr/bin/docker-compose -f docker-compose.yml restart
