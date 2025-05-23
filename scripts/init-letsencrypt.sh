@@ -11,13 +11,14 @@ if [ -d "./certbot/conf/live/${domains[0]}" ]; then
 else
   echo "### Requesting certificate for ${domains[*]} ..."
 
-  docker-compose run --rm certbot sh -c "certbot certonly \
-    --webroot -w /var/www/certbot \
-    --email $email \
-    --agree-tos \
-    --no-eff-email \
-    -d ${domains[*]} \
-    $( [ $staging -ne 0 ] && echo '--staging' )"
+  docker-compose run --rm certbot certbot certonly \
+  --webroot -w /var/www/certbot \
+  --email $email \
+  --agree-tos \
+  --no-eff-email \
+  -d ${domains[*]} \
+  $( [ $staging -ne 0 ] && echo '--staging' )
+
 
   echo "### Certificates created."
 fi
