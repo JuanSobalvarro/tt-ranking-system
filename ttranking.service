@@ -1,0 +1,16 @@
+[Unit]
+Description=Table Tennis Ranking Docker Compose Service
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=~/tt-ranking-system
+ExecStart=/usr/bin/docker-compose -f docker-compose.yml up -d
+ExecStop=/usr/bin/docker-compose -f docker-compose.yml down
+ExecReload=/usr/bin/docker-compose -f docker-compose.yml restart
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
