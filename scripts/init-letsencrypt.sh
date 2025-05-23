@@ -7,7 +7,7 @@ fi
 
 domains=(ttranking.juso-software.com)
 rsa_key_size=4096
-data_path="~/tt-ranking-system/certbot"
+data_path="home/sobalvarrog_juans/tt-ranking-system/certbot"
 email="sobalvarrog_juans@gmail.com" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
