@@ -7,9 +7,9 @@ Requires=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/sobalvarrog_juans/tt-ranking-system
-ExecStart=/usr/bin/docker-compose -f docker-compose.yml up -d
-ExecStop=/usr/bin/docker-compose -f docker-compose.yml down
-ExecReload=/usr/bin/docker-compose -f docker-compose.yml restart
+ExecStart=/usr/bin/docker compose -f docker-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.yml down
+ExecReload=/usr/bin/docker compose -f docker-compose.yml restart
 TimeoutStartSec=0
 
 [Install]
