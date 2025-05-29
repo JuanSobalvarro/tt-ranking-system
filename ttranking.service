@@ -4,10 +4,10 @@ After=network.target docker.service
 Requires=docker.service
 
 [Service]
-Type=simple
-RemainAfterExit=no
+Type=oneshot
+RemainAfterExit=yes
 WorkingDirectory=/home/sobalvarrog_juans/tt-ranking-system
-ExecStart=/usr/bin/docker compose -f docker-compose.yml up
+ExecStart=/usr/bin/docker compose -f docker-compose.yml up -d
 ExecStop=/usr/bin/docker compose -f docker-compose.yml down
 ExecReload=/usr/bin/docker compose -f docker-compose.yml restart
 TimeoutStartSec=0
