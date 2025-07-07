@@ -5,6 +5,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   HomeIcon,
+  UserIcon,
   UserGroupIcon,
   CalendarIcon,
   ClipboardDocumentListIcon,

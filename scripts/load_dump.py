@@ -29,7 +29,7 @@ def load_dump_into_postgres(container_name, user, password, db_name):
     env = os.environ.copy()
     env["PGPASSWORD"] = password
     command = [
-        "docker", "exec", container_name,
+        "docker", "exec", "-it", container_name,
         "psql", "-U", user, "-d", db_name, "-f", "/tmp/dump.sql"
     ]
     result = run_command(command, env=env)
@@ -44,7 +44,7 @@ def apply_migrations(container_name, user, password):
     env = os.environ.copy()
     env["PGPASSWORD"] = password
     # This command seems to create a dump, not apply migrations — adjust as needed
-    command = ["docker", "exec", container_name, "sh", "-c", f"pg_dump -U {user} > /tmp/post_migrations.sql"]
+    command = ["docker", "exec", "-it", container_name, "sh", "-c", f"pg_dump -U {user} > /tmp/post_migrations.sql"]
     result = run_command(command, env=env)
     if result is not None:
         print("Migrations applied successfully.")

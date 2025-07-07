@@ -145,7 +145,7 @@ class DoublesGameViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 class MatchPagination(PageNumberPagination):
-    page_size = 5
+    page_size = 20
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -160,6 +160,12 @@ class SinglesMatchViewSet(viewsets.ModelViewSet):
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        include_nested = self.request.query_params.get('include_nested', 'false').lower() == 'true'
+        context['include_nested'] = include_nested
+        return context
 
     def get_queryset(self):
         queryset = SinglesMatch.objects.all()

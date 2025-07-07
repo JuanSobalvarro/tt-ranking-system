@@ -11,7 +11,7 @@ class SinglesGame(models.Model):
     A singles game is a game between two players.
     Fields: match, player1_score, player2_score, winner
     """
-    match = models.ForeignKey('SinglesMatch', related_name='games', on_delete=models.CASCADE)
+    match = models.ForeignKey('SinglesMatch', related_name='singles_games', on_delete=models.CASCADE)
     player1_score = models.IntegerField(default=0)
     player2_score = models.IntegerField(default=0)
     winner = models.IntegerField(blank=True, null=True)
@@ -91,9 +91,21 @@ class SinglesMatch(models.Model):
 
     @property
     def games_won(self):
-        player1_wins = SinglesGame.objects.filter(match=self.id, winner=1).count()
-        player2_wins = SinglesGame.objects.filter(match=self.id, winner=2).count()
-        return player1_wins, player2_wins
+        player1_wins = self.singles_games.filter(winner=1)
+        player2_wins = self.singles_games.filter(winner=2)
+        return player1_wins.count(), player2_wins.count()
+
+    @property
+    def player1_games(self):
+        return self.singles_games.filter(winner=1)
+
+    @property
+    def player2_games(self):
+        return self.singles_games.filter(winner=2)
+
+    @property
+    def games(self):
+        return self.singles_games.all()
 
     @property
     def players(self):

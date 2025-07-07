@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 CERT_PATH="/etc/letsencrypt/live/ttranking.juso-software.com/fullchain.pem"
 TARGET_CONF="/etc/nginx/conf.d/default.conf"
