@@ -1,8 +1,9 @@
 from datetime import datetime
 from django.db import models
+from core.models import SoftDeleteModel
 
 
-class Season(models.Model):
+class Season(SoftDeleteModel):
     """
     A season is a period of time during which matches are played.
     Fields: name, description, start_date, end_date, singles_points_for_win, singles_points_for_loss,

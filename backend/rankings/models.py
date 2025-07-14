@@ -1,103 +1,15 @@
-# ttranking/players/models.py
 from django.db import models
-from django.core.files.base import ContentFile
-from datetime import date
-from PIL import Image
-import io
-import os
-from uuid import uuid4
 from typing import Tuple
 from seasons.models import Season
-from .enums import SexChoices, CountryChoices
+from profiles.models import PlayerProfile
+from core.models import SoftDeleteModel
 
 
-DESIRED_SIZE = (600, 600)
-
-def get_image_upload_path(instance, filename):
-    # Generate a new filename using the player's ID or a UUID
-    if not filename:
-        return None
-    ext = instance.photo.name.split('.')[-1]
-    new_filename = f'{instance.id or uuid4().hex}.{ext}'
-    return os.path.join('player_photos/', new_filename)
-
-class Player(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    alias = models.CharField(max_length=100, null=True, blank=True)
-    gender = models.CharField(max_length=100, null=False, blank=True, choices=SexChoices)
-    date_of_birth = models.DateField(null=True, blank=True)
-    nationality = models.CharField(max_length=2, choices=CountryChoices, blank=True, null=True)
-    photo = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-
-    @property
-    def age(self) -> int:
-        if self.date_of_birth is None:
-            return None
-        today = date.today()
-        age = today.year - self.date_of_birth.year
-        if (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day):
-            age -= 1
-        return age
-
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
-    def save(self, *args, **kwargs):
-        # Step 1: Check if this is an update and get the old instance
-        if self.pk:
-            old_instance = Player.objects.filter(pk=self.pk).first()
-            old_photo = old_instance.photo if old_instance else None
-        else:
-            old_photo = None
-
-        # Step 2: Process the new photo only if it's updated
-        if self.photo and (not old_photo or old_photo != self.photo):
-            # Delete the old photo if a new one is being uploaded
-            if old_photo and os.path.isfile(old_photo.path):
-                os.remove(old_photo.path)
-
-            # Generate a new unique path for the photo
-            ext = self.photo.name.split('.')[-1]
-            file_path = os.path.join('player_photos/', f'{uuid4().hex}.{ext}')
-
-            # Open and process the image
-            image = Image.open(self.photo)
-            image = self.resize_and_crop(image, DESIRED_SIZE)
-
-            # Save the processed image to a BytesIO object
-            buffer = io.BytesIO()
-            image.save(buffer, format='PNG')
-            buffer.seek(0)
-
-            # Save the resized image to the photo field
-            self.photo.save(file_path, ContentFile(buffer.read()), save=False)
-
-        # Step 3: Call the original save method to save the rest of the fields
-        super(Player, self).save(*args, **kwargs)
-
-        self.create_rankings()
-
-    def create_rankings(self):
-        # Step 4: Create the player rankings for all seasons
-        Ranking.populate_ranking(self)
-
-    def resize_and_crop(self, image, size):
-        # Resize the image without preserving the aspect ratio
-        image = image.convert('RGBA')
-        image = image.resize(size)
-        return image
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-
-class Ranking(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='season_rankings')
+class Ranking(SoftDeleteModel):
+    player_profile = models.ForeignKey(PlayerProfile, on_delete=models.CASCADE, related_name='rankings')
     season = models.ForeignKey(Season, on_delete=models.CASCADE, related_name='player_rankings')
+
+    # statistics
     ranking = models.IntegerField(default=0)
     singles_matches_played = models.IntegerField(default=0)
     doubles_matches_played = models.IntegerField(default=0)
@@ -105,7 +17,7 @@ class Ranking(models.Model):
     singles_victories = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ('player', 'season')
+        unique_together = ('player_profile', 'season')
 
     @property
     def matches_played(self):
@@ -140,10 +52,10 @@ class Ranking(models.Model):
         return 0, 0
 
     @staticmethod
-    def populate_ranking(player: Player):
+    def populate_ranking(player_profile: PlayerProfile):
         """
         This functions ensures that a player has a ranking model in the system for every season
-        :param player:
+        :param player_profile:
         :return:
         """
         seasons = Season.objects.all()
@@ -153,9 +65,9 @@ class Ranking(models.Model):
             raise ValueError("There are no seasons in the system")
 
         for season in seasons:
-            if not Ranking.objects.filter(player=player, season=season).exists():
-                Ranking.objects.create(player=player, season=season)
-                print(f"Created ranking for {player} in {season}")
+            if not Ranking.objects.filter(player_profile=player_profile, season=season).exists():
+                Ranking.objects.create(player_profile=player_profile, season=season)
+                print(f"Created ranking for {player_profile} in {season}")
 
     def _add_points(self, points):
         self.ranking += points
@@ -280,17 +192,17 @@ class Ranking(models.Model):
         self.save()
 
     @staticmethod
-    def exists_or_create(player: Player, season: Season) -> 'Ranking':
+    def exists_or_create(player_profile: PlayerProfile, season: Season) -> 'Ranking':
         """
         Check if a ranking exists for a player, if not it will create a new one
-        :param player:
+        :param player_profile:
         :param season:
         :return Ranking:
         """
 
-        if not Ranking.objects.filter(player=player, season=season).exists():
-            return Ranking.objects.create(player=player, season=season)
-        return Ranking.objects.get(player=player, season=season)
+        if not Ranking.objects.filter(player_profile=player_profile, season=season).exists():
+            return Ranking.objects.create(player_profile=player_profile, season=season)
+        return Ranking.objects.get(player_profile=player_profile, season=season)
 
     def __str__(self):
         return f"{self.player} - {self.season.name}"

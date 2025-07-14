@@ -7,5 +7,3 @@ class ProfilesConfig(AppConfig):
 
     def ready(self):
         import profiles.signals
-        # Import the signals module to ensure that the signals are registered when the app is ready.
-        # This is necessary to ensure that the signals are connected when the app is loaded.

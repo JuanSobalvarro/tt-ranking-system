@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 
+from django.conf.global_settings import AUTH_USER_MODEL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '0.0.0.0', '[::1]', 'ttranking.juansobalvarro.site', 'backend', '*']
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1', '0.0.0.0', '[::1]', 'ttranking.juso-software.com', 'backend']
 
 
 # Application definition
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
 
     'core',
     'matches',
-    'players',
+    'rankings',
     'seasons',
     'profiles',
 ]
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'ttranking.urls'
@@ -118,19 +120,30 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'profiles.UserProfile'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Etc/GMT-6'
 
 USE_I18N = True
-
-USE_L10N = False
-
+USE_L10N = True
 USE_TZ = True
+
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('es', _('Spanish')),
+]
+
+# Path for translation files
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -170,7 +183,6 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8080',
     'http://localhost:8000',
     'http://127.0.0.1:8080',
     'http://127.0.0.1:8000',

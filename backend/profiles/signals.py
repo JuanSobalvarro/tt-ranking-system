@@ -1,14 +1,18 @@
-# backend/profiles/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from players.models import Player
-from .models import PlayerProfile
-from django.utils.crypto import get_random_string
+from profiles.models import UserProfile, PlayerProfile, RefereeProfile
 
-@receiver(post_save, sender=Player)
-def create_player_profile(sender, instance: Player, created, **kwargs):
-    if created:
-        username = instance.first_name + "_" + instance.last_name
-        # Generate random password
-        password = get_random_string(length=8)
-        PlayerProfile.objects.create(username=username, player=instance, password=password)
+@receiver(post_save, sender=PlayerProfile)
+def update_is_player_flag(sender, instance: PlayerProfile, **kwargs):
+    profile = instance.profile
+    if not profile.is_player:
+        profile.is_player = True
+        profile.save(update_fields=['is_player'])
+
+@receiver(post_save, sender=RefereeProfile)
+def update_is_referee_flag(sender, instance: RefereeProfile, **kwargs):
+    profile = instance.profile
+    if not profile.is_referee:
+        profile.is_referee = True
+        profile.save(update_fields=['is_referee'])
+

@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-13 20:23-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+#: .\matches\forms.py:12 .\matches\forms.py:51
+msgid "Fecha y hora"
+msgstr ""
+
+#: .\matches\forms.py:13
+msgid "Jugador 1"
+msgstr ""
+
+#: .\matches\forms.py:14
+msgid "Puntos de Jugador 1"
+msgstr ""
+
+#: .\matches\forms.py:15
+msgid "Jugador 2"
+msgstr ""
+
+#: .\matches\forms.py:16
+msgid "Puntos de Jugador 2"
+msgstr ""
+
+#: .\matches\forms.py:52
+msgid "Equipo 1, jugador 1"
+msgstr ""
+
+#: .\matches\forms.py:53
+msgid "Equipo 1, jugador 2"
+msgstr ""
+
+#: .\matches\forms.py:54
+msgid "Puntos del Equipo 1"
+msgstr ""
+
+#: .\matches\forms.py:55
+msgid "Equipo 2, jugador 1"
+msgstr ""
+
+#: .\matches\forms.py:56
+msgid "Equipo 2, jugador 2"
+msgstr ""
+
+#: .\matches\forms.py:57
+msgid "Puntos del Equipo 2"
+msgstr ""
+
+#: .\players\forms.py:14
+msgid "Nombre"
+msgstr ""
+
+#: .\players\forms.py:15
+msgid "Apellido"
+msgstr ""
+
+#: .\players\forms.py:16
+msgid "Apodo"
+msgstr ""
+
+#: .\players\forms.py:17
+msgid "Sexo"
+msgstr ""
+
+#: .\players\forms.py:18
+msgid "Fecha de nacimiento"
+msgstr ""
+
+#: .\players\forms.py:19
+msgid "Nacionalidad"
+msgstr ""
+
+#: .\players\forms.py:20
+msgid "Ranking"
+msgstr ""
+
+#: .\players\forms.py:21
+msgid "Foto"
+msgstr ""
+
+#: .\ttranking\settings.py:138
+msgid "English"
+msgstr ""
+
+#: .\ttranking\settings.py:139
+msgid "Spanish"
+msgstr ""

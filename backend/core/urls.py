@@ -9,6 +9,6 @@ urlpatterns = [
     path('', views.APIRootView.as_view(), name='api_root'),
     path('token/', TokenObtainPairView.as_view(), name='api_token'),
     path('token-refresh/', TokenRefreshView.as_view(), name='api_token_refresh'),
-    path('home/', views.HomeView.as_view(), name='home'),
-    path('admin/home/', views.AdminHomeView.as_view(), name='admin_home')
+    # path('home/', views.HomeView.as_view(), name='home'),
+    # path('admin/home/', views.AdminHomeView.as_view(), name='admin_home')
 ]
